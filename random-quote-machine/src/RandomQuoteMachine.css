@@ -1,0 +1,41 @@
+*{
+    --background-color: red;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 500px;
+    background-color: white;
+    border-radius: 2%;
+    padding: 40px 50px;
+}
+
+.quote-text {
+    font-size: 34px;
+}
+
+.quote-author {
+    text-align: right;
+}
+
+.quote-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.quote-link {
+    text-decoration: none;
+    padding-top: 20px;
+}
+
+.quote-button {
+    padding: 10px;
+    border: 1px solid red;
+    background-color: red;
+    color: white;
+    border-radius: 5%;
+    cursor: pointer;
+}
