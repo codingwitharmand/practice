@@ -33,24 +33,30 @@ const RandomQuoteMachine = () => {
 	quote = updateQuote();
 
 	return (
-		<div id="quote-box" className="wrapper">
-			<p id="text" className="quote-text">
-				{quote.text}
-			</p>
-			<span id="author" className="quote-author">
-				— {quote.author.split(",")[0]}
-			</span>
-			<div className="quote-buttons">
-				<a id="tweet-quote" href="#" className="quote-link">
-					Tweet quote
-				</a>
-				<button
-					id="new-quote"
-					className="quote-button"
-					onClick={() => setQuote(updateQuote)}
-				>
-					New quote
-				</button>
+		<div className="random-quote-machine">
+			<div id="quote-box" className="wrapper">
+				<p id="text" className="quote-text">
+					"{quote.text}"
+				</p>
+				<span id="author" className="quote-author">
+					— {quote.author.split(",")[0]}
+				</span>
+				<div className="quote-buttons">
+					<a
+						id="tweet-quote"
+						href={`https://twitter.com/intent/tweet?text=${quote.text}`}
+						className="quote-link"
+					>
+						Tweet quote
+					</a>
+					<button
+						id="new-quote"
+						className="quote-button"
+						onClick={() => setQuote(updateQuote)}
+					>
+						New quote
+					</button>
+				</div>
 			</div>
 		</div>
 	);

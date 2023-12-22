@@ -1,6 +1,10 @@
-*{
-    --background-color: red;
-}
+.random-quote-machine {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    height: 100vh;
+  }
 
 .wrapper {
     display: flex;
@@ -14,6 +18,7 @@
 
 .quote-text {
     font-size: 34px;
+    animation: showQuote 1s ease-in;
 }
 
 .quote-author {
@@ -29,6 +34,7 @@
 .quote-link {
     text-decoration: none;
     padding-top: 20px;
+    color: red;
 }
 
 .quote-button {
@@ -38,4 +44,22 @@
     color: white;
     border-radius: 5%;
     cursor: pointer;
+}
+
+@keyframes showQuote {
+    0% {
+        opacity: 0;
+    }
+    25% {
+        opacity: 0.25;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    75% {
+        opacity: 0.75;
+    }
+    100% {
+        opacity: 1;
+    }
 }
