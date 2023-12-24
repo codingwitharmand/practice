@@ -1,0 +1,37 @@
+.drum-machine-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#drum-machine {
+    display: flex;
+    justify-content: center;
+    width: 70vw;
+    border: 2px solid grey;
+    padding: 30px 0;
+    gap: 20px;
+}
+
+.drum-pads {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+}
+
+#display {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    color: white;
+    font-size: min(4vw, 8vh);
+
+}
+
+.drum-pad {
+    font-size: min(4vw, 8vh);
+    padding: 10px 20px;
+}
