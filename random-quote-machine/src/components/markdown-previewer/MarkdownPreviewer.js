@@ -1,81 +1,60 @@
 import { Component } from "react";
 import "./MarkdownPreviewer.css";
-import ReactMarkdown from "react-markdown";
-import DOMPurify from "dompurify";
-import remarkGfm from "remark-gfm";
+import Markdown from "markdown-to-jsx";
+import { marked } from "marked";
 
 class MarkdownPreviewer extends Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			inputText: `# Welcome to my React Markdown Previewer!
-## This is a sub-heading...
-### And here's some other cool stuff:
-Heres an [example link](http://www.google.com).
-Here's some example code:
+  constructor(props) {
+    super(props);
+    this.state = {
+      markdown: `
+# H1 Heading
+## H2 Heading
+[Visit MDN Web Docs](https://developer.mozilla.org/)
+Inline code: \`console.log('Hello World!')\`
+\`\`\`javascript
+console.log('Hello World!');
 \`\`\`
-// This is an example of code block with syntax highlighting.
-const helloWorld = () => {
-    console.log("Hello World!");
-};
-\`\`\`
-* Lists
-* [ ] todo
-* [x] done
-> Block Quotes!
-You can also make text **bold**... whoa!
+- List item 1
+- List item 2
 
-![Simple image](https://postimg.cc/nXXVjcT5)
-`,
-			outputHTML: null,
-		};
-		this.handleChange = this.handleChange.bind(this);
-		this.parseMarkdownToHTML = this.parseMarkdownToHTML.bind(this);
-	}
+> Blockquote
 
-	componentDidMount() {
-		const parseText = this.parseMarkdownToHTML(this.state.inputText);
-		this.setState({ outerWidth: parseText });
-	}
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
 
-	handleChange(event) {
-		this.setState({
-			inputText: event.target.value,
-		});
-		this.parseMarkdownToHTML(event.target.value);
-	}
+**Bolded Text**
+`
+    };
+  }
 
-	parseMarkdownToHTML(markdownText) {
-		const html = DOMPurify.sanitize(markdownText);
-		this.setState({ outputHTML: markdownText });
-	}
+  handleChange = (e) => {
+    this.setState({ markdown: e.target.value });
+  };
 
-	render() {
-		const { inputText, outputHTML } = this.state;
-
-		return (
-			<div className="markdown-previewer">
-				<div className="editor-wrapper">
-					<h2>Editor</h2>
-					<textarea
-						id="editor"
-						className="editor"
-						value={this.state.inputText}
-						onChange={this.handleChange}
-					/>
-				</div>
-				<div id="preview">
-					<h2>Previewer</h2>
-					<div className="markdown-preview">
-						<ReactMarkdown remarkPlugins={[remarkGfm]}>
-							{this.state.outputHTML}
-						</ReactMarkdown>
-					</div>
-				</div>
-			</div>
-		);
-	}
+  render() {
+    return (
+      <div className="markdown-previewer">
+        <div className="editor-wrapper">
+          <h3>Editor</h3>
+          <textarea
+            id="editor"
+            className="editor"
+            value={this.state.markdown}
+            onChange={this.handleChange}
+          />
+        </div>
+        <div>
+          <h2>Previewer</h2>
+          <div 
+			id="preview" 
+			className="markdown-preview"
+			dangerouslySetInnerHTML={{ __html: marked(this.state.markdown.replace(/\n/g, '<br>'), { sanitize: true }) }}
+		  >
+		  </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default MarkdownPreviewer;
