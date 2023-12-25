@@ -39,6 +39,7 @@
   "devDependencies": {
     "dompurify": "^3.0.6",
     "marked": "^11.1.0",
-    "react-markdown": "^9.0.1"
+    "react-markdown": "^9.0.1",
+    "sass": "^1.69.5"
   }
 }
