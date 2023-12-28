@@ -9,7 +9,7 @@ class Calculator extends React.Component {
             display: 0,
             inputValue: 0
         }
-    }
+    }   
 
     reset = () => {
         this.setState({ display: 0, inputValue: 0 });
@@ -38,6 +38,7 @@ class Calculator extends React.Component {
 
         }
     }
+      
 
     displayOperation = (e) => {
         if(this.state.display.toString().includes('=')) {
