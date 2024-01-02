@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 
+var cors = require("cors");
+app.use(cors({ optionsSuccessStatus: 200 }));
+
 app.get('/api/:value?', (req, res) => {
     let value = req.params.value;
     console.log(`Val: ${value}`);
@@ -20,7 +23,7 @@ app.get('/api/:value?', (req, res) => {
     }
 
     const utc = timestamp.toUTCString();
-    const unix = timestamp.getTime() / 1000;
+    const unix = Math.floor(timestamp.getTime() / 1000);
 
     res.json({ unix, utc });
 
