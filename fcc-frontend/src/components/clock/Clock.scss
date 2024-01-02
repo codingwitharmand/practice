@@ -1,0 +1,40 @@
+@mixin flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.clock {
+    @include flexCenter;
+    background-color: rgb(1, 64, 1);
+    color: white;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+
+    &__head {
+        display: flex;
+        gap: 20vw;
+    }
+
+    span {
+        font-size: 2rem;
+    }
+
+    .cta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__body {
+        border: 5px solid darkgray;
+        border-radius: 15%;
+        padding: 10px 30px;
+    }
+
+    &__buttons {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+    }
+}
