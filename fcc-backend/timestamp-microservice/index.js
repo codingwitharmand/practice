@@ -10,7 +10,7 @@ app.get('/api/:value?', (req, res) => {
     if(value === undefined){
     const now = new Date();
     res.json({
-        'unix': Math.floor(now.getTime() / 1000),
+        'unix':now.getTime() / 1000,
         'utc': now.toUTCString()
     });
     }
@@ -23,7 +23,7 @@ app.get('/api/:value?', (req, res) => {
     }
 
     const utc = timestamp.toUTCString();
-    const unix = Math.floor(timestamp.getTime() / 1000);
+    const unix =timestamp.getTime();
 
     res.json({ unix, utc });
 
