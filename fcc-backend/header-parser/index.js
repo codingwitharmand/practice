@@ -7,7 +7,7 @@ app.use(cors({ optionsSuccessStatus: 200 }));
 
 app.get('/api/whoami', function (req, res) {
     res.json({
-        'ip': req.headers['x-forwarded-for'],
+        'ipaddress': req.headers['x-forwarded-for'],
         'language': req.header('Accept-Language'),
         'software': req.header('User-Agent'),
     });
