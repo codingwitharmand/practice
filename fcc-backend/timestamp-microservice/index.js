@@ -3,10 +3,11 @@ const app = express();
 
 app.get('/api/:value?', (req, res) => {
     let value = req.params.value;
-    if(value === ''){
+    console.log(`Val: ${value}`);
+    if(value === undefined){
     const now = new Date();
     res.json({
-        'unix': now.getTime() / 1000,
+        'unix': Math.floor(now.getTime() / 1000),
         'utc': now.toUTCString()
     });
     }
