@@ -2,105 +2,109 @@ import './Clock.scss';
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown, faPlay, faPause, faPowerOff } from '@fortawesome/free-solid-svg-icons';
-import Beep from '../drum-machine/audios/W.mp3';
+
 
 class Clock extends React.Component {
     constructor(props) {
-        super(props);
-        this.state = {
-            isRunning: false,
-            breakLength: 5,
-            sessionLength: 25,
-            timeLeft: '00:05',
-            interval: null,
-            isBreak: false
-        }
+      super(props);
+      this.state = {
+        isRunning: false,
+        breakLength: 5,
+        sessionLength: 25,
+        timeLeft: '25:00',
+        interval: null,
+        isBreak: false
+      }
     }
-
     incrementBreak = () => {
-        let newTime  = parseInt(this.state.breakLength) + 1;
-        if(newTime > 60) return;
-        this.setState({
-            breakLength: parseInt(this.state.breakLength) + 1
-        });
+      let newValue  = parseInt(this.state.breakLength) + 1;
+      if(newValue > 60) return;
+      this.setState({
+        breakLength: parseInt(this.state.breakLength) + 1
+      });
     }
-
+  
     decrementBreak = () => {
-        let newTime = parseInt(this.state.breakLength) - 1;
-        if (newTime < 1) return;
-        this.setState({
-            breakLength: newTime
-        });
+      let newValue = parseInt(this.state.breakLength) - 1;
+      if (newValue < 1) return;
+      this.setState({
+        breakLength: newValue
+      });
     }
-
+    
     incrementSession = () => {
-        let newTime  = parseInt(this.state.sessionLength) + 1;
-        if(newTime > 60) return;
-        this.setState({
-            timeLeft: `${newTime}:00`,
-            sessionLength: newTime
-        });
+      let newValue  = parseInt(this.state.sessionLength) + 1;
+      if(newValue > 60) return;
+      this.setState({
+        timeLeft: newValue < 10 ? `0${newValue}:00` : `${newValue}:00`,
+        sessionLength: newValue
+      });
     }
-
+  
     decrementSession = () => {
-        let newTime = parseInt(this.state.sessionLength) - 1;
-        if (newTime < 1) return;
-        this.setState({
-            timeLeft: `${newTime}:00`,
-            sessionLength: newTime
-        });
+      let newValue = parseInt(this.state.sessionLength) - 1;
+      if (newValue < 1) return;
+      this.setState({
+        timeLeft: newValue < 10 ? `0${newValue}:00` : `${newValue}:00`,
+        sessionLength: newValue
+      });
     }
-
+    
     handleReset = () => {
-        clearInterval(this.state.interval);
-        this.setState({
-            isRunning: false,
-            timeLeft: `25:00`,
-            breakLength: 5,
-            sessionLength: 25
-        });
-        document.getElementById('beep').stop()
+      clearInterval(this.state.interval);
+      this.setState({
+        isRunning: false,
+        timeLeft: '25:00',
+        breakLength: 5,
+        sessionLength: 25,
+        isBreak: false
+      });
+      const audio = document.getElementById('beep');
+      audio.pause();
+      audio.currentTime = 0;
     }
-
+    
     handleStartStop = () => {
-        const isRunning = this.state.isRunning;
-        if(!isRunning){
-            this.startTimer()
+      const isRunning = this.state.isRunning;
+      if(!isRunning){
+        this.startTimer()
+      } else {
+        clearInterval(this.state.interval);
+      }
+      this.setState({
+        isRunning: !isRunning
+      });
+    }
+  
+    startTimer = () => {
+      clearInterval(this.state.interval);
+      const interval = setInterval(() => {
+        let [minutes, seconds] = this.state.timeLeft.split(':').map(Number);
+        let newValue;
+        if(seconds === 0){
+          if(minutes === 0){
+            let breakValue = this.state.breakLength < 10 ? `0${this.state.breakLength}:00` : `${this.state.breakLength}:00`;
+            let sessionValue = this.state.sessionLength < 10 ? `0${this.state.sessionLength}:00` : `${this.state.sessionLength}:00`;
+            newValue = this.state.isBreak ? sessionValue : breakValue;
+            this.setState({
+              isBreak: !this.state.isBreak
+            })
+            document.getElementById('beep').play();
+          } else {
+            newValue = `${minutes - 1 < 10 ? '0' : ''}${minutes - 1}:59`
+          }
         } else {
-            clearInterval(this.state.interval);
+          newValue = `${minutes < 10 ? '0' : ''}${minutes}:${seconds - 1 < 10 ? '0' : ''}${seconds - 1}`
         }
         this.setState({
-            isRunning: !isRunning
-        });
-    }
-
-    startTimer = () => {
-        clearInterval(this.state.interval);
-        const interval = setInterval(() => {
-            let [minutes, seconds] = this.state.timeLeft.split(':').map(Number);
-            let newTime;
-            if(seconds === 0){
-                if(minutes === 0){
-                    newTime = this.state.isBreak ? `${this.state.sessionLength}:00` : `${this.state.breakLength}:00`;
-                    this.setState({
-                        isBreak: !this.state.isBreak
-                    })
-                    document.getElementById('beep').play();
-                } else {
-                    newTime = `${minutes - 1 < 10 ? '0' : ''}${minutes - 1}:59`
-                }
-            } else {
-                newTime = `${minutes < 10 ? '0' : ''}${minutes}:${seconds - 1 < 10 ? '0' : ''}${seconds - 1}`
-            }
-            this.setState({
-                timeLeft: newTime
-            })
-        }, 1000);
-        this.setState({
-            interval: interval
+          timeLeft: newValue
         })
+      }, 1000);
+      this.setState({
+        interval: interval
+      })
     }
-
+    
     render() {
         return(
             <div className="clock">
@@ -109,17 +113,26 @@ class Clock extends React.Component {
                     <div className='break'>
                         <h2 id="break-label">Break Length</h2>
                         <div className='cta'>
-                            <FontAwesomeIcon id="break-decrement" size='2x' icon={faArrowDown} onClick={this.decrementBreak} />
-                            <span id="break-length">{this.state.breakLength}</span>
-                            <FontAwesomeIcon id="break-increment" size='2x' icon={faArrowUp} onClick={this.incrementBreak} />
+                            <button id="break-decrement" onClick={this.decrementBreak} value='-'>
+                                <FontAwesomeIcon size='2x' icon={faArrowDown}  />
+                            </button>
+                            <div id="break-length" className='clock__display'>{this.state.breakLength}</div>
+                            <button id="break-increment" onClick={this.incrementBreak} value='+'>
+                                <FontAwesomeIcon size='2x' icon={faArrowUp} />
+                            </button>
                         </div>
                     </div>
                     <div className='session'>
                         <h2 id="session-label">Session Length</h2>
                         <div className='cta'>
-                            <FontAwesomeIcon id="session-decrement" size='2x' icon={faArrowDown} onClick={this.decrementSession} />
-                            <span id="session-length">{this.state.sessionLength}</span>
-                            <FontAwesomeIcon id="session-increment" size='2x' icon={faArrowUp} onClick={this.incrementSession} />
+                            <button id="session-decrement" onClick={this.decrementSession} >
+                                <FontAwesomeIcon size='2x' icon={faArrowDown} />
+                            </button>
+                            <div id="session-length" className='clock__display'>{this.state.sessionLength}</div>
+                            <button id="session-increment" onClick={this.incrementSession} >
+                                <FontAwesomeIcon size='2x' icon={faArrowUp} />
+                            </button>
+                            
                         </div>
                     </div>
                 </div>
@@ -127,16 +140,21 @@ class Clock extends React.Component {
                     <h3 id="timer-label">
                         {this.state.isBreak ? 'Break has begun' : 'Session'}
                     </h3>
-                    <span id="time-left">{this.state.timeLeft}</span>
+                    <div className='clock__display' id="time-left">{this.state.timeLeft}</div>
                 </div>
                 <div className='clock__buttons'>
-                    <FontAwesomeIcon id="start-stop" size='2x' icon={this.state.isRunning ? faPause : faPlay} onClick={this.handleStartStop} />
-                    <FontAwesomeIcon id="reset" size='2x' icon={faPowerOff} onClick={this.handleReset} />
+                    <button id="start_stop" onClick={this.handleStartStop}>
+                        <FontAwesomeIcon size='2x' icon={this.state.isRunning ? faPause : faPlay}  />
+                    </button>
+                    <button id="reset" onClick={this.handleReset}>
+                        <FontAwesomeIcon size='2x' icon={faPowerOff} />
+                    </button>
+                    
                 </div>
-                <audio src={Beep} id="beep" />
+                <audio src="https://cdn.freecodecamp.org/testable-projects-fcc/audio/BeepSound.wav" id="beep" />
             </div>
         )
     }
-}
+  }
 
 export default Clock;

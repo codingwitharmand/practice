@@ -1,6 +1,5 @@
 import { Component } from "react";
 import "./MarkdownPreviewer.css";
-import Markdown from "markdown-to-jsx";
 import { marked } from "marked";
 
 class MarkdownPreviewer extends Component {

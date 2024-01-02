@@ -16,8 +16,18 @@
         gap: 20vw;
     }
 
+    & button {
+        background-color: rgb(1, 64, 1);
+        border: transparent;
+        outline: none;
+    }
+
     span {
         font-size: 2rem;
+    }
+
+    &__display {
+        font-size: 2.2rem;
     }
 
     .cta {
@@ -39,9 +49,5 @@
         display: flex;
         gap: 10px;
         padding: 10px;
-    }
-
-    & svg:hover {
-        cursor: pointer;
     }
 }
