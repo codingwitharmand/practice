@@ -1,19 +1,28 @@
 const express = require('express');
 const app = express();
 
-app.get('/api/:value', (req, res) => {
- let value = req.params.value;
- value = isNaN(Number(value)) ? value : parseInt(value)
- const timestamp = new Date(value);
+app.get('/api/:value?', (req, res) => {
+    let value = req.params.value;
+    if(value === ''){
+    const now = new Date();
+    res.json({
+        'unix': now.getTime() / 1000,
+        'utc': now.toUTCString()
+    });
+    }
 
- if (isNaN(timestamp.getTime())) {
-    return res.status(400).json({ error: 'Invalid timestamp input' });
- }
+    value = isNaN(Number(value)) ? value : parseInt(value)
+    const timestamp = new Date(value);
 
- const utc = timestamp.toUTCString();
- const unix = timestamp.getTime();
+    if (isNaN(timestamp.getTime())) {
+        return res.status(400).json({ error: 'Invalid date'});
+    }
 
- res.json({ unix, utc });
+    const utc = timestamp.toUTCString();
+    const unix = timestamp.getTime() / 1000;
+
+    res.json({ unix, utc });
+
 });
 
 const PORT = process.env.PORT || 3000;
