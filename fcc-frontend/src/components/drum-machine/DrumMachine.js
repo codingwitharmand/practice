@@ -34,7 +34,7 @@ const DrumMachine = () => {
     const key = String(e.key).toUpperCase();
     if (keys.includes(key)) {
       document.getElementById(`${key}`).play();
-        }
+    }
   };
 
   return (
