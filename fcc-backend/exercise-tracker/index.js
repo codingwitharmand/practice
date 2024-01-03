@@ -5,7 +5,6 @@ const app = express();
 const mongoose = require('mongoose');
 const User = require('./schema/User');
 const Exercise = require('./schema/Exercise');
-const Log = require('./schema/Log');
 
 const port = process.env.PORT || 3000;
 const DB_USER = process.env.DB_USER;
@@ -54,9 +53,9 @@ app.post('/api/users/:id/exercises', async(req, res) => {
         res.json({
             _id: user._id,
             username: savedExercise.username,
-            date: savedExercise.date,
-            duration: savedExercise.duration,
             description: savedExercise.description,
+            duration: savedExercise.duration,
+            date: savedExercise.date,
         })
     } catch (error) {
         console.log(error);
