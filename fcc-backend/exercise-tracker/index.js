@@ -41,12 +41,12 @@ app.post('/api/users/:id/exercises', async(req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).send("Invalid user");
         
-        const today = new Date();
-        const dateValue = date ? date : today.toDateString();
         const exercise = new Exercise({
-            username:user.username, 
-            description, duration, 
-            date: dateValue 
+            user_id: user._id,
+            username: user.username, 
+            description, 
+            duration, 
+            date: date ? new Date(date) : new Date() 
         });
 
         let savedExercise = await exercise.save();
@@ -55,7 +55,7 @@ app.post('/api/users/:id/exercises', async(req, res) => {
             username: savedExercise.username,
             description: savedExercise.description,
             duration: savedExercise.duration,
-            date: savedExercise.date,
+            date: new Date(savedExercise.date).toDateString()
         })
     } catch (error) {
         console.log(error);
@@ -73,6 +73,11 @@ app.get('/api/users/:_id/logs', async (req, res) => {
     const {from, to, limit} = req.query;
 
     const user = await User.findById(req.params._id);
+    if(!user) {
+        res.send('User not found');
+        return;
+    }
+
     const query = { username: user.username }
     
     if(from) {
@@ -87,37 +92,21 @@ app.get('/api/users/:_id/logs', async (req, res) => {
         }
     }
 
-    Exercise.find(query).limit(limit ? parseInt(limit) : 5).then((exercises) => {
-        if(!exercises) {
-            return res.status(404).send('No exercises found');
-        }
+    const exercises = await Exercise.find(query).limit(limit ?? 5);
+
+    const log = exercises.map(ex => ({
+        description: ex.description,
+        duration: ex.duration,
+        date: ex.date.toDateString()
+    }));
+
+    res.json({
+        username: user.username,
+        count: exercises.length,
+        _id: user._id,
+        log
+    })
         
-        let returnData = {
-            _id: user._id,
-            username: user.username
-        };
-        
-        if(query.date) {
-            if(query.date.$gte) returnData.from = new Date(query.date.$gte).toDateString();
-            if(query.date.$lt) returnData.to = new Date(query.date.$lt).toDateString();
-        }
-        
-        let log = [];
-        if(exercises.length > 0) {
-            for(exercise of exercises) {
-                let date = new Date(exercise.date);
-                let exerciceLog = {
-                    description: exercise.description,
-                    duration: exercise.duration,
-                    date: date.toDateString()
-                };
-                log.push(exerciceLog);
-            }
-        }
-        returnData.count = exercises.length;
-        returnData.log = log;
-        res.json(returnData);
-    }).catch(err => console.log(err));
 })
 
 app.listen(port, function() {
