@@ -1,0 +1,19 @@
+meta {
+  name: save_user
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3030/api/users
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  username: armand
+}
+
+body:multipart-form {
+  username: armand
+}
