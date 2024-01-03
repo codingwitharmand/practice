@@ -25,6 +25,7 @@ const Url = mongoose.model('Url', urlSchema);
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 app.get('/api/shorturl/:id', async(req, res) => {
     const urlDoc = await Url.findOne({ short_url: req.params.id});
@@ -36,7 +37,7 @@ app.get('/api/shorturl/:id', async(req, res) => {
     res.redirect(urlDoc.original_url);
 })
 
-app.post('/api/shorturl', async function(req, res, next) {
+app.post('/api/shorturl', async function(req, res) {
     const {url} = req.body;
     
     if (!isValidUrl(url)) {
