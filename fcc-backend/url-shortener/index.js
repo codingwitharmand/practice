@@ -53,7 +53,7 @@ app.post('/api/shorturl', async function(req, res) {
 });
 
 function isValidUrl(url) {
-    const urlRegex = /^https?:\/\/(www\.){1}[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/;
+    const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/;
     return urlRegex.test(url);
 }
 
