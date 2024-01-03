@@ -26,7 +26,7 @@ app.post('/api/users', async (req, res) => {
 
         //Save the user to MongoDB
         let savedUser = await user.save();
-        res.status(201).json({
+        res.json({
             _id: savedUser._id,
             username: savedUser.username,
         })  
@@ -72,7 +72,22 @@ app.get('/api/users', (req, res) => {
 })
 
 app.get('/api/users/:_id/logs', (req, res) => {
-    Exercise.find({_id: req.params._id}).then((exercises) => {
+    const {from, to, limit} = req.query;
+    const query = {_id: req.params._id }
+    
+    if(from) {
+        query.date = { $gte: new Date(from) }
+    }
+
+    if(to) {
+        if(query.date){
+            query.date.$lt = new Date(to);
+        } else {
+            query.date = { $lt: new Date(to) }
+        }
+    }
+
+    Exercise.find(query).limit(limit ? parseInt(limit) : undefined).then((exercises) => {
         if(!exercises) {
             return res.status(404).send('No exercises found');
         }
@@ -95,9 +110,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
                 log: [...log]
             })
         }
-        
-        
-    })
+    });
 })
 
 app.listen(port, function() {
