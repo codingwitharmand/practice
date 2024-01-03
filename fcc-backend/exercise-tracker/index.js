@@ -45,7 +45,6 @@ app.post('/api/users/:id/exercises', async(req, res) => {
         const today = new Date();
         const dateValue = date ? date : today.toDateString();
         const exercise = new Exercise({
-            _id: user._id, 
             username:user.username, 
             description, duration, 
             date: dateValue 
@@ -53,7 +52,7 @@ app.post('/api/users/:id/exercises', async(req, res) => {
 
         let savedExercise = await exercise.save();
         res.json({
-            _id: savedExercise._id,
+            _id: user._id,
             username: savedExercise.username,
             date: savedExercise.date,
             duration: savedExercise.duration,
@@ -71,9 +70,11 @@ app.get('/api/users', (req, res) => {
     .catch(err => res.json([]));
 })
 
-app.get('/api/users/:_id/logs', (req, res) => {
+app.get('/api/users/:_id/logs', async (req, res) => {
     const {from, to, limit} = req.query;
-    const query = {_id: req.params._id }
+
+    const user = await User.findById(req.params._id);
+    const query = { username: user.username }
     
     if(from) {
         query.date = { $gte: new Date(from) }
@@ -87,7 +88,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
         }
     }
 
-    Exercise.find(query).limit(limit ? parseInt(limit) : undefined).then((exercises) => {
+    Exercise.find(query).limit(limit ? parseInt(limit) : 5).then((exercises) => {
         if(!exercises) {
             return res.status(404).send('No exercises found');
         }
@@ -110,7 +111,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
                 log: [...log]
             })
         }
-    });
+    }).catch(err => console.log(err));
 })
 
 app.listen(port, function() {
