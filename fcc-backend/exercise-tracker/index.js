@@ -92,9 +92,19 @@ app.get('/api/users/:_id/logs', async (req, res) => {
         if(!exercises) {
             return res.status(404).send('No exercises found');
         }
+        
+        let returnData = {
+            _id: user._id,
+            username: user.username
+        };
+        
+        if(query.date) {
+            if(query.date.$gte) returnData.from = new Date(query.date.$gte).toDateString();
+            if(query.date.$lt) returnData.to = new Date(query.date.$lt).toDateString();
+        }
+        
+        let log = [];
         if(exercises.length > 0) {
-            let log = [];
-            
             for(exercise of exercises) {
                 let date = new Date(exercise.date);
                 let exerciceLog = {
@@ -104,13 +114,10 @@ app.get('/api/users/:_id/logs', async (req, res) => {
                 };
                 log.push(exerciceLog);
             }
-            res.json({
-                username: exercises[0].username,
-                count: exercises.length,
-                _id: exercises[0]._id,
-                log: [...log]
-            })
         }
+        returnData.count = exercises.length;
+        returnData.log = log;
+        res.json(returnData);
     }).catch(err => console.log(err));
 })
 
