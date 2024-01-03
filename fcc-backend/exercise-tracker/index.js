@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 const User = require('./schema/User');
 const Exercise = require('./schema/Exercise');
+const Log = require('./schema/Log');
 
 const port = process.env.PORT || 3000;
 const DB_USER = process.env.DB_USER;
@@ -40,9 +41,16 @@ app.post('/api/users/:id/exercises', async(req, res) => {
         const { description, duration, date} = req.body;
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).send("Invalid user");
+        
         const today = new Date();
         const dateValue = date ? date : today.toDateString();
-        const exercise = new Exercise({username:user.username, description, duration, date: dateValue });
+        const exercise = new Exercise({
+            _id: user._id, 
+            username:user.username, 
+            description, duration, 
+            date: dateValue 
+        });
+
         let savedExercise = await exercise.save();
         res.json({
             _id: savedExercise._id,
@@ -61,6 +69,35 @@ app.get('/api/users', (req, res) => {
     User.find()
     .then(data => res.json(data))
     .catch(err => res.json([]));
+})
+
+app.get('/api/users/:_id/logs', (req, res) => {
+    Exercise.find({_id: req.params._id}).then((exercises) => {
+        if(!exercises) {
+            return res.status(404).send('No exercises found');
+        }
+        if(exercises.length > 0) {
+            let log = [];
+            
+            for(exercise of exercises) {
+                let date = new Date(exercise.date);
+                let exerciceLog = {
+                    description: exercise.description,
+                    duration: exercise.duration,
+                    date: date.toDateString()
+                };
+                log.push(exerciceLog);
+            }
+            res.json({
+                username: exercises[0].username,
+                count: exercises.length,
+                _id: exercises[0]._id,
+                log: [...log]
+            })
+        }
+        
+        
+    })
 })
 
 app.listen(port, function() {
